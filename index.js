@@ -50,12 +50,12 @@ exports.stream = function (em, eventName) {
                 if (offset == null) {
                   buf = buffers.splice(0, bytes);
                   if (!pending.skip) {
-                    buf = buf.slice();
+                    buf = buf.toBuffer(0);
                   }
                 }
                 else {
                   if (!pending.skip) {
-                    buf = buffers.slice(offset, bytes);
+                    buf = buffers.toBuffer(offset, bytes);
                   }
                   offset = bytes;
                 }
@@ -156,7 +156,7 @@ exports.stream = function (em, eventName) {
             
             var taken = 0;
             pending = function () {
-                var buf = buffers.slice(offset + taken);
+                var buf = buffers.toBuffer(offset + taken);
                 // simple but slow string search
                 for (var i = 0; i <= buf.length - search.length; i++) {
                     for (
@@ -167,11 +167,11 @@ exports.stream = function (em, eventName) {
                     if (j === search.length) {
                         pending = null;
                         if (offset != null) {
-                          vars.set(name, buffers.slice(offset, offset + taken + i));
+                          vars.set(name, buffers.toBuffer(offset, offset + taken + i));
                           offset += taken + i + j;
                         }
                         else {
-                          vars.set(name, buffers.slice(0, taken + i));
+                          vars.set(name, buffers.toBuffer(0, taken + i));
                           buffers.splice(0, taken + i + j);
                         }
                         next();
